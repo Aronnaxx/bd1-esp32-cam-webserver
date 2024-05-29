@@ -15,8 +15,7 @@
 #include <esp_http_server.h>
 #include <esp_timer.h>
 #include <esp_camera.h>
-#include <esp_int_wdt.h>
-#include <esp_task_wdt.h>
+
 #include <Arduino.h>
 #include <WiFi.h>
 
@@ -414,12 +413,6 @@ static esp_err_t cmd_handler(httpd_req_t *req){
     }
     else if(!strcmp(variable, "reboot")) {
         if (lampVal != -1) setLamp(0); // kill the lamp; otherwise it can remain on during the soft-reboot
-        esp_task_wdt_init(3,true);  // schedule a a watchdog panic event for 3 seconds in the future
-        esp_task_wdt_add(NULL);
-        periph_module_disable(PERIPH_I2C0_MODULE); // try to shut I2C down properly
-        periph_module_disable(PERIPH_I2C1_MODULE);
-        periph_module_reset(PERIPH_I2C0_MODULE);
-        periph_module_reset(PERIPH_I2C1_MODULE);
         Serial.print("REBOOT requested");
         while(true) {
           flashLED(50);
@@ -882,4 +875,12 @@ void startCameraServer(int hPort, int sPort){
         httpd_register_uri_handler(stream_httpd, &favicon_32x32_uri);
         httpd_register_uri_handler(stream_httpd, &favicon_ico_uri);
     }
+}
+
+void setupLedFlash(int pin) {
+#if CONFIG_LED_ILLUMINATOR_ENABLED
+  ledcAttach(pin, 5000, 8);
+#else
+  log_i("LED flash is disabled -> CONFIG_LED_ILLUMINATOR_ENABLED = 0");
+#endif
 }

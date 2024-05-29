@@ -1,6 +1,4 @@
 #include <esp_camera.h>
-#include <esp_int_wdt.h>
-#include <esp_task_wdt.h>
 #include <WiFi.h>
 #include <DNSServer.h>
 #include <WiFiUdp.h>
@@ -78,6 +76,7 @@ IPAddress gw;
 // Declare external function from app_httpd.cpp
 extern void startCameraServer(int hPort, int sPort);
 extern void serialDump();
+extern void setupLedFlash(int pin);
 
 // Names for the Camera. (set these in myconfig.h)
 #if defined(CAM_NAME)
@@ -354,17 +353,9 @@ void StartCamera() {
         Serial.printf("\r\n\r\nCRITICAL FAILURE: Camera sensor failed to initialise.\r\n\r\n");
         Serial.printf("A full (hard, power off/on) reboot will probably be needed to recover from this.\r\n");
         Serial.printf("Meanwhile; this unit will reboot in 1 minute since these errors sometime clear automatically\r\n");
-        // Reset the I2C bus.. may help when rebooting.
-        periph_module_disable(PERIPH_I2C0_MODULE); // try to shut I2C down properly in case that is the problem
-        periph_module_disable(PERIPH_I2C1_MODULE);
-        periph_module_reset(PERIPH_I2C0_MODULE);
-        periph_module_reset(PERIPH_I2C1_MODULE);
         // And set the error text for the UI
         critERR = "<h1>Error!</h1><hr><p>Camera module failed to initialise!</p><p>Please reset (power off/on) the camera.</p>";
         critERR += "<p>We will continue to reboot once per minute since this error sometimes clears automatically.</p>";
-        // Start a 60 second watchdog timer
-        esp_task_wdt_init(60,true);
-        esp_task_wdt_add(NULL);
     } else {
         Serial.println("Camera init succeeded");
 
@@ -766,11 +757,8 @@ void setup() {
     // Initialise and set the lamp
     if (lampVal != -1) {
         #if defined(LAMP_PIN)
-            ledcSetup(lampChannel, pwmfreq, pwmresolution);  // configure LED PWM channel
-            ledcAttachPin(LAMP_PIN, lampChannel);            // attach the GPIO pin to the channel
-            if (autoLamp) setLamp(0);                        // set default value
-            else setLamp(lampVal);
-         #endif
+            setupLedFlash(LAMP_PIN);
+        #endif
     } else {
         Serial.println("No lamp, or lamp disabled in config");
     }
