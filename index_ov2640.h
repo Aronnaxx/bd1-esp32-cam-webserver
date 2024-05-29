@@ -279,6 +279,20 @@ const uint8_t index_ov2640_html[] = R"=====(<!doctype html>
                 <label for="stream_url" id="stream_link">Stream</label>
                 <div id="stream_url" class="default-action">Unknown</div>
               </div>
+              <div class="input-group" id="servo-control-group">
+                <label for="servo">Servo Control</label>
+                <select id="servo" class="default-action">
+                  <option value="0">Neck Movement</option>
+                  <option value="1">Turntable</option>
+                  <option value="2">Left 45° Neck Tilt</option>
+                  <option value="3">Right 45° Neck Tilt</option>
+                  <option value="4">Blink</option>
+                  <option value="5">Holoprojector</option>
+                  <option value="6">Left Antenna</option>
+                  <option value="7">Right Antenna</option>
+                </select>
+                <input type="range" id="servo-angle" min="0" max="180" value="90" class="default-action">
+              </div>
             </nav>
         </div>
         <figure>

@@ -6,27 +6,12 @@
 #include "src/parsebytes.h"
 #include "time.h"
 #include <ESPmDNS.h>
-
+#include <Adafruit_PWMServoDriver.h>
 
 /* This sketch is a extension/expansion/reork of the 'official' ESP32 Camera example
  *  sketch from Expressif:
  *  https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/Camera/CameraWebServer
  *
- *  It is modified to allow control of Illumination LED Lamps's (present on some modules),
- *  greater feedback via a status LED, and the HTML contents are present in plain text
- *  for easy modification.
- *
- *  A camera name can now be configured, and wifi details can be stored in an optional
- *  header file to allow easier updated of the repo.
- *
- *  The web UI has had changes to add the lamp control, rotation, a standalone viewer,
- *  more feeedback, new controls and other tweaks and changes,
- * note: Make sure that you have either selected ESP32 AI Thinker,
- *       or another board which has PSRAM enabled to use high resolution camera modes
- */
-
-
-/*
  *  FOR NETWORK AND HARDWARE SETTINGS COPY OR RENAME 'myconfig.sample.h' TO 'myconfig.h' AND EDIT THAT.
  *
  * By default this sketch will assume an AI-THINKER ESP-CAM and create

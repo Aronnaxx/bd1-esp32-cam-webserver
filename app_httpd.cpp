@@ -31,6 +31,7 @@
 extern void flashLED(int flashtime);
 extern void setLamp(int newVal);
 extern void printLocalTime(bool extraData);
+extern void setServoAngle(int servoNum, int angle); // Added for servo control
 
 // External variables declared in the main .ino
 extern char myName[];
@@ -324,6 +325,7 @@ static esp_err_t cmd_handler(httpd_req_t *req){
     size_t buf_len;
     char variable[32] = {0,};
     char value[32] = {0,};
+    char value2[32] = {0,}; // Added for servo control
 
     flashLED(75);
 
@@ -336,7 +338,8 @@ static esp_err_t cmd_handler(httpd_req_t *req){
         }
         if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) {
             if (httpd_query_key_value(buf, "var", variable, sizeof(variable)) == ESP_OK &&
-                httpd_query_key_value(buf, "val", value, sizeof(value)) == ESP_OK) {
+                httpd_query_key_value(buf, "val", value, sizeof(value)) == ESP_OK &&
+                httpd_query_key_value(buf, "val2", value2, sizeof(value2)) == ESP_OK) { // Added for servo control
             } else {
                 free(buf);
                 httpd_resp_send_404(req);
